@@ -7,10 +7,12 @@ To get things working following these steps:
    a) Open Package Manager in Unity
    b) Select the + drop down in the top-right corner (Unity 2020.2)
    c) Select Add package from git URL ...
-   d) Use ??? for this.
+   d) Paste:  https://github.com/crawfis/GTMY.Audio.git 
+   e) Click Add
 2) Create an Empty Game Object and Add two scripts to it:
    a) Music Player
    b) Audio Manager Singleton
+   c) Select the Music Player for the Audio Manager Singleton's field Music Player
 3) Create your library of music as an addressable group.
    a) Add a label to your soundtracks of "music". You can also add additional labels for specific uses or genres. These can be controlled in the Music Player Genre field.
    b) SFX clips do not need to be in Addressables yet.
