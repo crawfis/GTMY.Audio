@@ -1,18 +1,21 @@
 {
 	"name": "com.gamesthatmoveyou.audiomanager",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"displayName": "GTMY AudioManager",
 	"description": "Control music, ambiance and SFX",
 	"unity": "2019.4",
 	"unityRelease": "10f1",
-  "keywords": [
-    "music",
-    "SFX",
-    "audio"
-  ],
-  "author": {
-    "name": "Games That Move You",
-    "email": "support@gamesthatmoveyou.com",
-    "url": "https://www.gamesthatmoveyou.com"
-  }
+	"dependencies": {
+		"com.unity.addressables": "1.14.2"
+	},
+	"keywords": [
+		"music",
+		"SFX",
+		"audio"
+	],
+	"author": {
+		"name": "Games That Move You",
+		"email": "support@gamesthatmoveyou.com",
+		"url": "https://www.gamesthatmoveyou.com"
+	}
 }
