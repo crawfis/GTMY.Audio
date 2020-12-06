@@ -46,6 +46,9 @@ namespace GTMY.Audio
 
             musicController = new MusicController(musicSource1, musicSource2, this);
 
+        }
+        private void Start()
+        {
             LoadMusicAddressesAsync(musicGenre);
         }
 
