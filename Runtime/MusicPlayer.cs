@@ -65,7 +65,7 @@ namespace GTMY.Audio
                 soundtracks.Add(resourceLocation);
             }
             // I do not think I need the AsyncOperationHandle anymore
-            Addressables.Release(addressHandles);
+            //Addressables.Release(addressHandles);
         }
 
         public void Stop()
@@ -102,24 +102,29 @@ namespace GTMY.Audio
                 StartCoroutine(PlayAll());
         }
 
+        //public void PlayNext()
+        //{
+
+        //}
+
         IEnumerator PlayAll()
         {
             if (soundtracks.Count <= 0) yield break;
 
             if (soundtracks.Count == 1)
             {
-                yield return PlaySingleSoundtrack();
                 isPlaying = true;
+                yield return PlaySingleSoundtrack();
             }
             else if(soundtracks.Count == 2)
             {
-                yield return PlayTwoSoundtracks();
                 isPlaying = true;
+                yield return PlayTwoSoundtracks();
             }
             else if(soundtracks.Count > 2)
             {
-                yield return PlayManySoundtracks();
                 isPlaying = true;
+                yield return PlayManySoundtracks();
             }
         }
 
