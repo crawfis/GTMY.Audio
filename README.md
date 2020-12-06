@@ -4,11 +4,12 @@ This package has a simple music player and Sound Effects player that is controll
 
 To get things working following these steps:
 1) Install this package (which should also install Unity's Addressables package)
-   a) Open Package Manager in Unity
-   b) Select the + drop down in the top-right corner (Unity 2020.2)
-   c) Select Add package from git URL ...
-   d) Paste:  https://github.com/crawfis/GTMY.Audio.git 
-   e) Click Add
+   a) In Player Settings, select .Net 4.x.
+   b) Open Package Manager in Unity
+   c) Select the + drop down in the top-right corner (Unity 2020.2)
+   d) Select Add package from git URL ...
+   e) Paste:  https://github.com/crawfis/GTMY.Audio.git 
+   f) Click Add
 2) Create an Empty Game Object and Add two scripts to it:
    a) Music Player
    b) Audio Manager Singleton
@@ -32,6 +33,8 @@ public class AudioManagerTest : MonoBehaviour
     private void Update()
     {
         const float volumeDelta = 0.1f;
+        if(Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
         if (Input.GetKeyDown(KeyCode.Alpha1))
             AudioManagerSingleton.Instance.GlobalVolume -= volumeDelta;
         if (Input.GetKeyDown(KeyCode.Alpha2))
