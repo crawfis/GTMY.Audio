@@ -91,13 +91,15 @@ namespace GTMY.Audio
             }
         }
 
-        private void Awake()
+        private async Task Awake()
         {
             // Keep this instance alive
             DontDestroyOnLoad(this.gameObject);
             // Note: Could expose this to the Unity Editor for customization.
             AudioSource sfxAudioSource = gameObject.AddComponent<AudioSource>();
             PlayerSFX = new SfxController2D(sfxAudioSource);
+
+            await Addressables.Initialize().Task;
         }
     }
 }

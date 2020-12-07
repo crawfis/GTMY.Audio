@@ -64,9 +64,12 @@ namespace GTMY.Audio
 
         private void SaveClipAddresses(AsyncOperationHandle<IList<IResourceLocation>> addressHandles)
         {
-            foreach(var resourceLocation in addressHandles.Result)
+            if (addressHandles.Status == AsyncOperationStatus.Succeeded)
             {
-                soundtracks.Add(resourceLocation);
+                foreach (var resourceLocation in addressHandles.Result)
+                {
+                    soundtracks.Add(resourceLocation);
+                }
             }
             // I do not think I need the AsyncOperationHandle anymore
             //Addressables.Release(addressHandles);
