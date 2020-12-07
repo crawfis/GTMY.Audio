@@ -58,7 +58,7 @@ namespace GTMY.Audio
             var addressableLabels = new List<string>() { "music" };
             if (musicGenre != null && musicGenre != String.Empty)
                 addressableLabels.Add(musicGenre);
-            addressableAssets = Addressables.LoadResourceLocationsAsync(addressableLabels, Addressables.MergeMode.Intersection);
+            addressableAssets = Addressables.LoadResourceLocationsAsync(addressableLabels.ToArray(), Addressables.MergeMode.Intersection);
             addressableAssets.Completed += SaveClipAddresses;
         }
 
