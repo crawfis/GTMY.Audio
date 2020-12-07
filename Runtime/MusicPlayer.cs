@@ -52,12 +52,13 @@ namespace GTMY.Audio
             LoadMusicAddressesAsync(musicGenre);
         }
 
+        private AsyncOperationHandle<IList<IResourceLocation>> addressableAssets;
         private void LoadMusicAddressesAsync(string musicGenre)
         {
             var addressableLabels = new List<string>() { "music" };
             if (musicGenre != null && musicGenre != String.Empty)
                 addressableLabels.Add(musicGenre);
-            AsyncOperationHandle<IList<IResourceLocation>> addressableAssets = Addressables.LoadResourceLocationsAsync(addressableLabels, Addressables.MergeMode.Intersection);
+            addressableAssets = Addressables.LoadResourceLocationsAsync(addressableLabels, Addressables.MergeMode.Intersection);
             addressableAssets.Completed += SaveClipAddresses;
         }
 
