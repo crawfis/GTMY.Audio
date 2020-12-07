@@ -150,7 +150,7 @@ namespace GTMY.Audio
             AudioClip audioClip1 = currentOperationHandle.Result;
             oldOperationHandle = Addressables.LoadAssetAsync<AudioClip>(soundtracks[1]);
             yield return oldOperationHandle;
-            AudioClip audioClip2 = currentOperationHandle.Result;
+            AudioClip audioClip2 = oldOperationHandle.Result;
             var newAudioClip = audioClip1;
             while (true)
             {

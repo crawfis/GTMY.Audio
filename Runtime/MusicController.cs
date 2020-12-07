@@ -139,6 +139,7 @@ namespace GTMY.Audio
             originalSource.volume = 0;
             newSource.volume = Volume * GlobalVolume;
             originalSource.Stop();
+            originalSource.clip = null;
             crossFading = false;
         }
     }
