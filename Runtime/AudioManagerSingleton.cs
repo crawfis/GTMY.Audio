@@ -14,8 +14,20 @@ namespace GTMY.Audio
     /// </summary>
     public class AudioManagerSingleton : MonoBehaviour
     {
+        [SerializeField]
+        private MusicPlayerAddressables Music;
+
+        private float globalVolume = 1;
+        private float volumeBeforeMuteCalled;
+        private bool isMuted = false;
+        private Dictionary<string, ISfxAudioPlayer> sfxPlayers = new Dictionary<string, ISfxAudioPlayer>();
+
         #region Instance
         private static AudioManagerSingleton instance;
+
+        /// <summary>
+        /// Get the singleton instance.
+        /// </summary>
         public static AudioManagerSingleton Instance
         {
             get
@@ -31,20 +43,8 @@ namespace GTMY.Audio
 
                 return instance;
             }
-            set
-            {
-                instance = value;
-            }
         }
         #endregion
-
-        [SerializeField]
-        public MusicPlayer Music;
-
-        private float globalVolume = 1;
-        private float volumeBeforeMuteCalled;
-        private bool isMuted = false;
-        private Dictionary<string, ISfxPlayer> sfxPlayers = new Dictionary<string, ISfxPlayer>();
 
         public float GlobalVolume
         {
@@ -57,6 +57,19 @@ namespace GTMY.Audio
                 globalVolume = Mathf.Clamp(value, 0, 1);
                 if (globalVolume > 0) isMuted = false;
                 AdjustControllerVolumes();
+            }
+        }
+
+        /// <summary>
+        /// Play a sound effect of the specified type.
+        /// </summary>
+        /// <param name="soundType">A string corresponding to a registered sfx player.</param>
+        /// <param name="volumeScale">Value between zero and 1 to scale the relative volume of the player.</param>
+        public void PlaySfx(string soundType, float volumeScale = 1)
+        {
+            if (sfxPlayers.TryGetValue(soundType, out ISfxAudioPlayer sfxPlayer))
+            {
+                sfxPlayer.Play(volumeScale);
             }
         }
 
@@ -97,14 +110,14 @@ namespace GTMY.Audio
 
         private void AdjustControllerVolumes()
         {
-            Music.GlobalVolume = globalVolume;
-            foreach(ISfxPlayer player in sfxPlayers.Values)
+            Music.Volume = globalVolume;
+            foreach(ISfxAudioPlayer player in sfxPlayers.Values)
             {
                 player.GlobalVolume = globalVolume;
             }
         }
 
-        internal void RegisterPlayer(string soundType, ISfxPlayer sfxPlayer)
+        internal void RegisterPlayer(string soundType, ISfxAudioPlayer sfxPlayer)
         {
             if(sfxPlayers.ContainsKey(soundType))
             {
@@ -116,14 +129,6 @@ namespace GTMY.Audio
             }
 
             sfxPlayers.Add(soundType, sfxPlayer);
-        }
-
-        public void PlaySfx(string soundType, float volumeScale = 1)
-        {
-            if (sfxPlayers.TryGetValue(soundType, out ISfxPlayer sfxPlayer))
-            {
-                sfxPlayer.Play(volumeScale);
-            }
         }
     }
 }

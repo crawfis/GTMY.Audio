@@ -3,7 +3,7 @@
     /// <summary>
     /// Play and control a specific type of Sfx (collision, gunshot, ...)
     /// </summary>
-    public interface ISfxPlayer
+    public interface ISfxAudioPlayer
     {
         /// <summary>
         /// An indicator of the type of Sfx this player plays

@@ -13,6 +13,11 @@
         void Play(UnityEngine.AudioClip clip, float volumeScale);
 
         /// <summary>
+        /// Stop any clip playing.
+        /// </summary>
+        void Stop();
+
+        /// <summary>
         /// Specify the position of the the audio source.
         /// </summary>
         /// <param name="position">A local position of the audio source.</param>

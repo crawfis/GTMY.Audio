@@ -5,16 +5,25 @@ namespace GTMY.Audio
     /// <summary>
     /// Turns a Unity GameObject into an IAudio or creates and adds a GameObject with an AudioSource.
     /// </summary>
-    internal class AudioGameObjectAdaptor : IAudio
+    public class AudioGameObjectAdaptor : IAudio
     {
         private readonly AudioSource audioSource;
 
-        public AudioGameObjectAdaptor()
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="name">The name to give the GameObject. Default is IAudioWrapper.</param>
+        public AudioGameObjectAdaptor(string name = "IAudioWrapper")
         {
-            var gameObject = new GameObject("IAudioWrapper");
+            var gameObject = new GameObject(name);
             audioSource = gameObject.AddComponent<AudioSource>();
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="gameObject">A UnityEngine.GameObject.</param>
+        /// <remarks>If the game object does not contain an AudioSource, one will be added.</remarks>
         public AudioGameObjectAdaptor(GameObject gameObject)
         {
             audioSource = gameObject.GetComponent<AudioSource>();
@@ -24,6 +33,7 @@ namespace GTMY.Audio
             }
         }
 
+        /// <inheritdoc/>
         public void Play(AudioClip clip, float volumeScale)
         {
             audioSource.clip = clip;
@@ -31,6 +41,14 @@ namespace GTMY.Audio
             audioSource.Play();
         }
 
+        /// <inheritdoc/>
+        public void Stop()
+        {
+            audioSource.Stop();
+            audioSource.clip = null;
+        }
+
+        /// <inheritdoc/>
         public void SetAudioPosition(Vector3 position)
         {
             audioSource.transform.localPosition = position;

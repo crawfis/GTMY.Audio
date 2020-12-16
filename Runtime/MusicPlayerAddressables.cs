@@ -8,7 +8,10 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace GTMY.Audio
 {
-    public class MusicPlayer : MonoBehaviour
+    /// <summary>
+    /// Music player that uses Addessables. 
+    /// </summary>
+    public class MusicPlayerAddressables : MonoBehaviour
     {
         [SerializeField] private List<IResourceLocation> soundtracks = new List<IResourceLocation>();
         [SerializeField] private string musicGenre = string.Empty;
@@ -22,7 +25,10 @@ namespace GTMY.Audio
         private IList<int> permutation;
         private readonly System.Random randomGenerator = new System.Random();
 
-        public float GlobalVolume
+        /// <summary>
+        /// Get or set the overall volume.
+        /// </summary>
+        public float Volume
         {
             get
             {
@@ -35,9 +41,12 @@ namespace GTMY.Audio
             }
         }
 
+        /// <summary>
+        /// Get or set the time it takes to fade from one song to another.
+        /// </summary>
         public float FadeTime { get; set; } = 1f;
 
-        public void Awake()
+        private void Awake()
         {
             // Create audio sources to be used in the MusicController.
             // This could be replaced with AudioSources with mixers and other
@@ -80,6 +89,9 @@ namespace GTMY.Audio
             //Addressables.Release(addressHandles);
         }
 
+        /// <summary>
+        /// Stop all music.
+        /// </summary>
         public void Stop()
         {
             StopAllCoroutines();
@@ -97,16 +109,25 @@ namespace GTMY.Audio
             isPlaying = false;
         }
 
+        /// <summary>
+        /// Pause the music
+        /// </summary>
         public void Pause()
         {
             musicController.Pause();
         }
 
+        /// <summary>
+        /// If the music was paused, resume.
+        /// </summary>
         public void UnPause()
         {
             musicController.UnPause();
         }
 
+        /// <summary>
+        /// Start playing music.
+        /// </summary>
         public void Play()
         {
             if(!isPlaying)
@@ -118,12 +139,15 @@ namespace GTMY.Audio
 
         //}
 
+        /// <summary>
+        /// Shuffle the playlist.
+        /// </summary>
         public void Shuffle()
         {
             permutation = GTMY.Utility.Shuffle.CreateRandomPermutation(soundtracks.Count, randomGenerator);
         }
 
-        IEnumerator PlayAll()
+        private IEnumerator PlayAll()
         {
             if (soundtracks.Count <= 0) yield break;
 
