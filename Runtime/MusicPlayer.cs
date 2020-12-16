@@ -12,10 +12,15 @@ namespace GTMY.Audio
     {
         [SerializeField] private List<IResourceLocation> soundtracks = new List<IResourceLocation>();
         [SerializeField] private string musicGenre = string.Empty;
+
         private int soundtrackIndex = 0;
         private MusicController musicController;
-        AsyncOperationHandle<AudioClip> currentOperationHandle;
-        AsyncOperationHandle<AudioClip> oldOperationHandle;
+        private bool isPlaying = false;
+        private readonly bool shuffleOnLoadAndReplay = true;
+        private AsyncOperationHandle<AudioClip> currentOperationHandle;
+        private AsyncOperationHandle<AudioClip> oldOperationHandle;
+        private IList<int> permutation;
+        private readonly System.Random randomGenerator = new System.Random();
 
         public float GlobalVolume
         {
@@ -58,7 +63,7 @@ namespace GTMY.Audio
             var addressableLabels = new List<string>() { "music" };
             if (musicGenre != null && musicGenre != String.Empty)
                 addressableLabels.Add(musicGenre);
-            addressableAssets = Addressables.LoadResourceLocationsAsync(addressableLabels.ToArray(), Addressables.MergeMode.Intersection);
+            addressableAssets = Addressables.LoadResourceLocationsAsync(addressableLabels, Addressables.MergeMode.Intersection);
             addressableAssets.Completed += SaveClipAddresses;
         }
 
@@ -102,7 +107,6 @@ namespace GTMY.Audio
             musicController.UnPause();
         }
 
-        private bool isPlaying = false;
         public void Play()
         {
             if(!isPlaying)
@@ -113,6 +117,11 @@ namespace GTMY.Audio
         //{
 
         //}
+
+        public void Shuffle()
+        {
+            permutation = GTMY.Utility.Shuffle.CreateRandomPermutation(soundtracks.Count, randomGenerator);
+        }
 
         IEnumerator PlayAll()
         {
@@ -167,7 +176,11 @@ namespace GTMY.Audio
 
         private IEnumerator PlayManySoundtracks()
         {
-            currentOperationHandle = Addressables.LoadAssetAsync<AudioClip>(soundtracks[soundtrackIndex]);
+            if(soundtrackIndex == 0 && shuffleOnLoadAndReplay)
+            {
+                Shuffle();
+            }
+            currentOperationHandle = Addressables.LoadAssetAsync<AudioClip>(soundtracks[permutation[soundtrackIndex]]);
             oldOperationHandle = currentOperationHandle;
             yield return currentOperationHandle;
             AudioClip newAudioClip = currentOperationHandle.Result;
@@ -189,8 +202,12 @@ namespace GTMY.Audio
                 if (firstTrack || soundtracks.Count > 2)
                 {
                     soundtrackIndex = (soundtrackIndex + 1) % soundtracks.Count;
+                    if (soundtrackIndex == 0 && shuffleOnLoadAndReplay)
+                    {
+                        Shuffle();
+                    }
                     oldOperationHandle = currentOperationHandle;
-                    currentOperationHandle = Addressables.LoadAssetAsync<AudioClip>(soundtracks[soundtrackIndex]);
+                    currentOperationHandle = Addressables.LoadAssetAsync<AudioClip>(soundtracks[permutation[soundtrackIndex]]);
                     yield return currentOperationHandle;
                     newAudioClip = currentOperationHandle.Result;
                 }

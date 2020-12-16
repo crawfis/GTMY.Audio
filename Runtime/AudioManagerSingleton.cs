@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace GTMY.Audio
 {
@@ -38,11 +40,11 @@ namespace GTMY.Audio
 
         [SerializeField]
         public MusicPlayer Music;
-        public SfxController2D PlayerSFX { get; private set; }
 
         private float globalVolume = 1;
         private float volumeBeforeMuteCalled;
         private bool isMuted = false;
+        private Dictionary<string, ISfxPlayer> sfxPlayers = new Dictionary<string, ISfxPlayer>();
 
         public float GlobalVolume
         {
@@ -56,12 +58,6 @@ namespace GTMY.Audio
                 if (globalVolume > 0) isMuted = false;
                 AdjustControllerVolumes();
             }
-        }
-
-        private void AdjustControllerVolumes()
-        {
-            Music.GlobalVolume = globalVolume;
-            PlayerSFX.GlobalVolume = globalVolume;
         }
 
         /// <summary>
@@ -95,11 +91,39 @@ namespace GTMY.Audio
         {
             // Keep this instance alive
             DontDestroyOnLoad(this.gameObject);
-            // Note: Could expose this to the Unity Editor for customization.
-            AudioSource sfxAudioSource = gameObject.AddComponent<AudioSource>();
-            PlayerSFX = new SfxController2D(sfxAudioSource);
 
             await UnityEngine.AddressableAssets.Addressables.Initialize().Task;
+        }
+
+        private void AdjustControllerVolumes()
+        {
+            Music.GlobalVolume = globalVolume;
+            foreach(ISfxPlayer player in sfxPlayers.Values)
+            {
+                player.GlobalVolume = globalVolume;
+            }
+        }
+
+        internal void RegisterPlayer(string soundType, ISfxPlayer sfxPlayer)
+        {
+            if(sfxPlayers.ContainsKey(soundType))
+            {
+                if (sfxPlayer == null || sfxPlayer == sfxPlayers[soundType]) return;
+                else
+                {
+                    throw new ArgumentException(String.Format("A Sfx Player of type {0} is already registered.", soundType), "soundType");
+                }
+            }
+
+            sfxPlayers.Add(soundType, sfxPlayer);
+        }
+
+        public void PlaySfx(string soundType, float volumeScale = 1)
+        {
+            if (sfxPlayers.TryGetValue(soundType, out ISfxPlayer sfxPlayer))
+            {
+                sfxPlayer.Play(volumeScale);
+            }
         }
     }
 }
