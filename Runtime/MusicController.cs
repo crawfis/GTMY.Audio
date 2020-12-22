@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace GTMY.Audio
@@ -10,9 +9,9 @@ namespace GTMY.Audio
     /// </summary>
     public class MusicController
     {
-        private AudioSource musicSource1;
-        private AudioSource musicSource2;
-        private MonoBehaviour coroutineHandler;
+        private readonly AudioSource musicSource1;
+        private readonly AudioSource musicSource2;
+        private readonly MonoBehaviour coroutineHandler;
         private bool source1Playing = false;
         private bool crossFading = false;
         private float localVolume = 1;
@@ -32,6 +31,23 @@ namespace GTMY.Audio
         }
 
         /// <summary>
+        /// Get or set the volume for music. It will be adjusted based on 
+        /// a global volume control.
+        /// </summary>
+        public float Volume
+        {
+            get
+            {
+                return localVolume;
+            }
+            set
+            {
+                localVolume = Mathf.Clamp(value, 0, 1);
+                AdjustAudioVolumes();
+            }
+        }
+
+        /// <summary>
         /// The constructor takes in two audio sources. This allows for greater
         /// configuration and avoids making this a MonoBehavior. Unfortunately, it
         /// thus requires a MonoBehavior object for Coroutine calls. The use of two audio 
@@ -45,22 +61,6 @@ namespace GTMY.Audio
             this.musicSource1 = musicSource1;
             this.musicSource2 = musicSource2;
             this.coroutineHandler = coroutineHandler;
-        }
-
-        /// <summary>
-        /// Get or set the volume for music. It will be adjusted based on 
-        /// a global volume control.
-        /// </summary>
-        public float Volume { 
-            get
-            {
-                return localVolume;
-            }
-            set
-            {
-                localVolume = Mathf.Clamp(value,0,1);
-                AdjustAudioVolumes();
-            }
         }
 
         /// <summary>

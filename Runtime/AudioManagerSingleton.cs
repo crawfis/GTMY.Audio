@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace GTMY.Audio
 {
@@ -12,52 +11,37 @@ namespace GTMY.Audio
     /// Pausing the game and turning sounds off, controlling the volume levels 
     /// are other great uses of a manager.
     /// </summary>
-    public class AudioManagerSingleton : MonoBehaviour
+    public class AudioManagerSingleton
     {
-        [SerializeField]
-        private MusicPlayerAddressables Music;
+        public IMusicPlayer Music { get; private set; }
 
-        private float globalVolume = 1;
+        private float masterVolume = 1;
         private float volumeBeforeMuteCalled;
         private bool isMuted = false;
-        private Dictionary<string, ISfxAudioPlayer> sfxPlayers = new Dictionary<string, ISfxAudioPlayer>();
-
-        #region Instance
-        private static AudioManagerSingleton instance;
+        private readonly Dictionary<string, ISfxAudioPlayer> sfxAudioPlayers = new Dictionary<string, ISfxAudioPlayer>();
 
         /// <summary>
         /// Get the singleton instance.
         /// </summary>
-        public static AudioManagerSingleton Instance
+        public static AudioManagerSingleton Instance { get; } = new AudioManagerSingleton();
+
+        public float MasterVolume
         {
             get
             {
-                if (instance == null)
-                {
-                    instance = FindObjectOfType<AudioManagerSingleton>();
-                    if (instance == null)
-                    {
-                        instance = new GameObject("AudioManager-Spawned", typeof(AudioManagerSingleton)).GetComponent<AudioManagerSingleton>();
-                    }
-                }
-
-                return instance;
-            }
-        }
-        #endregion
-
-        public float GlobalVolume
-        {
-            get
-            {
-                return globalVolume;
+                return masterVolume;
             }
             set
             {
-                globalVolume = Mathf.Clamp(value, 0, 1);
-                if (globalVolume > 0) isMuted = false;
+                masterVolume = UnityEngine.Mathf.Clamp(value, 0, 1);
+                if (masterVolume > 0) isMuted = false;
                 AdjustControllerVolumes();
             }
+        }
+
+        public void SetMusicPlayer(IMusicPlayer musicPlayer)
+        {
+            Music = musicPlayer;
         }
 
         /// <summary>
@@ -67,9 +51,9 @@ namespace GTMY.Audio
         /// <param name="volumeScale">Value between zero and 1 to scale the relative volume of the player.</param>
         public void PlaySfx(string soundType, float volumeScale = 1)
         {
-            if (sfxPlayers.TryGetValue(soundType, out ISfxAudioPlayer sfxPlayer))
+            if (sfxAudioPlayers.TryGetValue(soundType, out ISfxAudioPlayer sfxAudioPlayer))
             {
-                sfxPlayer.Play(volumeScale);
+                sfxAudioPlayer.Play(volumeScale);
             }
         }
 
@@ -80,8 +64,8 @@ namespace GTMY.Audio
         {
             if (!isMuted)
             {
-                volumeBeforeMuteCalled = globalVolume;
-                globalVolume = 0;
+                volumeBeforeMuteCalled = masterVolume;
+                masterVolume = 0;
                 AdjustControllerVolumes();
                 isMuted = true;
             }
@@ -94,41 +78,50 @@ namespace GTMY.Audio
         {
             if (isMuted)
             {
-                globalVolume = volumeBeforeMuteCalled;
+                masterVolume = volumeBeforeMuteCalled;
                 AdjustControllerVolumes();
                 isMuted = false;
             }
         }
 
-        private async System.Threading.Tasks.Task Awake()
+        /// <summary>
+        /// Register an audio player with the specified keyword or phrase.
+        /// </summary>
+        /// <param name="soundType">A string to associate with this audio player.</param>
+        /// <param name="sfxAudioPlayer">An ISfxAudioPlayer.</param>
+        public void RegisterAudioPlayer(ISfxAudioPlayer sfxAudioPlayer)
         {
-            // Keep this instance alive
-            DontDestroyOnLoad(this.gameObject);
-
-            await UnityEngine.AddressableAssets.Addressables.Initialize().Task;
-        }
-
-        private void AdjustControllerVolumes()
-        {
-            Music.Volume = globalVolume;
-            foreach(ISfxAudioPlayer player in sfxPlayers.Values)
+            string soundType = sfxAudioPlayer.SfxType;
+            if (sfxAudioPlayers.ContainsKey(soundType))
             {
-                player.GlobalVolume = globalVolume;
-            }
-        }
-
-        internal void RegisterPlayer(string soundType, ISfxAudioPlayer sfxPlayer)
-        {
-            if(sfxPlayers.ContainsKey(soundType))
-            {
-                if (sfxPlayer == null || sfxPlayer == sfxPlayers[soundType]) return;
+                if (sfxAudioPlayer == null || sfxAudioPlayer == sfxAudioPlayers[soundType]) return;
                 else
                 {
                     throw new ArgumentException(String.Format("A Sfx Player of type {0} is already registered.", soundType), "soundType");
                 }
             }
 
-            sfxPlayers.Add(soundType, sfxPlayer);
+            sfxAudioPlayers.Add(soundType, sfxAudioPlayer);
+        }
+
+        /// <summary>
+        /// Find the audio player associated with the keyword or phrase.
+        /// </summary>
+        /// <param name="soundType">A keyword string.</param>
+        /// <returns>An instance of ISfxAudioPlayer or throws an exception if none is registered with
+        /// the passed in string.</returns>
+        public ISfxAudioPlayer GetAudioPlayer(string soundType)
+        {
+            return sfxAudioPlayers[soundType];
+        }
+
+        private void AdjustControllerVolumes()
+        {
+            Music.MasterVolume = masterVolume;
+            foreach(ISfxAudioPlayer player in sfxAudioPlayers.Values)
+            {
+                player.MasterVolume = masterVolume;
+            }
         }
     }
 }

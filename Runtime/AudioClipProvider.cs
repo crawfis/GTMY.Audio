@@ -42,6 +42,14 @@ namespace GTMY.Audio
             if (clipIndex >= clips.Count)
             {
                 clipIndex = 0;
+                if(permutation == null)
+                {
+                    permutation = new List<int>(clips.Count);
+                    for(int i = 0; i < clips.Count; i++)
+                    {
+                        permutation.Add(i);
+                    }
+                }
             }
             if (clipIndex == 0 && shuffleOnLoadAndReplay)
             {

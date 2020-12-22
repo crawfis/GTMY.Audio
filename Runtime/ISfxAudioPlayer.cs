@@ -10,12 +10,12 @@
         /// </summary>
         string SfxType { get; }
         /// <summary>
-        /// A control for the overall max volume of the device.
+        /// Set the overall max volume of the device.
         /// </summary>
-        float GlobalVolume { get; set;  }
+        float MasterVolume { set;  }
 
         /// <summary>
-        /// The relative max volume of this Sfx. Scaled by GlobalVolume
+        /// Get or set the relative max volume of this music player. Scaled by MasterVolume
         /// </summary>
         float LocalVolume { get; set; }
 
@@ -29,7 +29,7 @@
         /// Play a Sfx clip associated with this Sfx type at the specified position.
         /// </summary>
         /// <param name="position">The position of the eminating sound.</param>
-        /// <param name="localVolumeScale">A scale for this instance. Multiplied by both GlobalVolume and LocalVolume.</param>
+        /// <param name="localVolumeScale">A scale for this instance. Multiplied by both GMasterVolume and LocalVolume.</param>
         void PlayAt(UnityEngine.Vector3 position, float localVolumeScale);
 
         /// <summary>

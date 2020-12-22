@@ -45,10 +45,18 @@ namespace GTMY.Audio
         /// <summary>
         /// Determines the clips and loads them into memory. This must be called first.
         /// </summary>
-        public void LoadAllClips()
+        public async void LoadAllClipsAsync()
         {
             addressableAssets = Addressables.LoadResourceLocationsAsync(labels, Addressables.MergeMode.Intersection);
             addressableAssets.Completed += AddressablesLoading_Completed;
+            await addressableAssets.Task;
+
+            List<System.Threading.Tasks.Task> clipLoadingTasks = new List<System.Threading.Tasks.Task>(assetHandles.Count);
+            foreach(var handle in assetHandles)
+            {
+                clipLoadingTasks.Add(handle.Task);
+            }
+            await System.Threading.Tasks.Task.WhenAll(clipLoadingTasks);
         }
 
         private void AddressablesLoading_Completed(AsyncOperationHandle<IList<IResourceLocation>> addressHandles)
@@ -57,20 +65,19 @@ namespace GTMY.Audio
             {
                 foreach (var resourceLocation in addressHandles.Result)
                 {
-                    Addressables.LoadAssetAsync<AudioClip>(resourceLocation).Completed += addressHandle =>
+                    var addressHandle = Addressables.LoadAssetAsync<AudioClip>(resourceLocation);
+                    // Keep track of the handles so we can clean up.
+                    assetHandles.Add(addressHandle);
+                    addressHandle.Completed += handle =>
                     {
-                        // Todo: Keep track of the handles so we can clean up.
-                        // Todo: If we are going to pre-load, then use this as a decorator over
-                        // a IClipProvider that contains a list of clips.
-                        AudioClip clip = addressHandle.Result;
-                        this.AddClip(clip);
-                        assetHandles.Add(addressHandle);
+                        AudioClip clip = handle.Result;
+                        if(clip != null)  this.AddClip(clip);
                     };
 
                 }
             }
             // I do not think I need the AsyncOperationHandle anymore
-            //Addressables.Release(addressHandles);
+            Addressables.Release(addressHandles);
         }
 
         protected override void Dispose(bool disposing)

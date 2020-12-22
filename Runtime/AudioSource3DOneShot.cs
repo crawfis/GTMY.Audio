@@ -3,21 +3,15 @@
 namespace GTMY.Audio
 {
     /// <summary>
-    /// A singleton audio source that plays clips using the PlayOneShot method.
+    /// An audio source that plays clips using the PlayOneShot method.
     /// </summary>
-    internal class OneShotAudioSourceSingleton : IAudio
+    public class AudioSource3DOneShot : IAudio
     {
         private readonly AudioSource audioSource;
 
-        /// <summary>
-        /// Get the single instance of this class.
-        /// </summary>
-        public static OneShotAudioSourceSingleton Instance { get; } = new OneShotAudioSourceSingleton();
-
-        private OneShotAudioSourceSingleton()
+        public AudioSource3DOneShot(AudioSource audioSource)
         {
-            var gameObject = new UnityEngine.GameObject("OneShotAudioSourceSingleton");
-            audioSource = gameObject.AddComponent<UnityEngine.AudioSource>();
+            this.audioSource = audioSource;
         }
 
         /// <inheritdoc/>

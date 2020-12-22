@@ -61,7 +61,7 @@ namespace GTMY.Audio
         private void RegisterDefaultAudioFactories()
         {
             RegisterAudioFactory(oneShotRegistry, new AudioFactoryOneShot2D());
-            RegisterAudioFactory(ThreeDRegistry, AudioFactoryBasic3D.Instance);
+            RegisterAudioFactory(ThreeDRegistry, AudioFactory3DBuiltIn.Instance);
         }
     }
 }

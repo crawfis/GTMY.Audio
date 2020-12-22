@@ -11,24 +11,23 @@ namespace GTMY.Audio
     /// <summary>
     /// Music player that uses Addessables. 
     /// </summary>
-    public class MusicPlayerAddressables : MonoBehaviour
+    public class MusicPlayerAddressables : MonoBehaviour, IMusicPlayer
     {
-        [SerializeField] private List<IResourceLocation> soundtracks = new List<IResourceLocation>();
         [SerializeField] private string musicGenre = string.Empty;
+        [SerializeField] private bool shuffleOnLoadAndReplay = true;
 
+        private List<IResourceLocation> soundtracks = new List<IResourceLocation>();
         private int soundtrackIndex = 0;
         private MusicController musicController;
         private bool isPlaying = false;
-        private readonly bool shuffleOnLoadAndReplay = true;
+        private AsyncOperationHandle<IList<IResourceLocation>> addressableAssets;
         private AsyncOperationHandle<AudioClip> currentOperationHandle;
         private AsyncOperationHandle<AudioClip> oldOperationHandle;
         private IList<int> permutation;
         private readonly System.Random randomGenerator = new System.Random();
 
-        /// <summary>
-        /// Get or set the overall volume.
-        /// </summary>
-        public float Volume
+        /// <inheritdoc/>
+        public float MasterVolume
         {
             get
             {
@@ -36,62 +35,35 @@ namespace GTMY.Audio
             }
             set
             {
-                if(musicController != null)
+                if (musicController != null)
                     musicController.GlobalVolume = value;
             }
         }
 
-        /// <summary>
-        /// Get or set the time it takes to fade from one song to another.
-        /// </summary>
+        /// <inheritdoc/>
+        public float Volume
+        {
+            get
+            {
+                return musicController.Volume;
+            }
+            set
+            {
+                if (musicController != null)
+                    musicController.Volume = value;
+            }
+        }
+
+        /// <inheritdoc/>
         public float FadeTime { get; set; } = 1f;
 
-        private void Awake()
-        {
-            // Create audio sources to be used in the MusicController.
-            // This could be replaced with AudioSources with mixers and other
-            // changes to the default AudioSource.
-            AudioSource musicSource1 = gameObject.AddComponent<AudioSource>();
-            AudioSource musicSource2 = gameObject.AddComponent<AudioSource>();
-
-            // Make sure to enable loop on music sources
-            musicSource1.loop = true;
-            musicSource2.loop = true;
-
-            musicController = new MusicController(musicSource1, musicSource2, this);
-
-        }
+        /// <inheritdoc/>
         private void Start()
         {
             LoadMusicAddressesAsync(musicGenre);
         }
 
-        private AsyncOperationHandle<IList<IResourceLocation>> addressableAssets;
-        private void LoadMusicAddressesAsync(string musicGenre)
-        {
-            var addressableLabels = new List<string>() { "music" };
-            if (musicGenre != null && musicGenre != String.Empty)
-                addressableLabels.Add(musicGenre);
-            addressableAssets = Addressables.LoadResourceLocationsAsync(addressableLabels, Addressables.MergeMode.Intersection);
-            addressableAssets.Completed += SaveClipAddresses;
-        }
-
-        private void SaveClipAddresses(AsyncOperationHandle<IList<IResourceLocation>> addressHandles)
-        {
-            if (addressHandles.Status == AsyncOperationStatus.Succeeded)
-            {
-                foreach (var resourceLocation in addressHandles.Result)
-                {
-                    soundtracks.Add(resourceLocation);
-                }
-            }
-            // I do not think I need the AsyncOperationHandle anymore
-            //Addressables.Release(addressHandles);
-        }
-
-        /// <summary>
-        /// Stop all music.
-        /// </summary>
+        /// <inheritdoc/>
         public void Stop()
         {
             StopAllCoroutines();
@@ -109,42 +81,56 @@ namespace GTMY.Audio
             isPlaying = false;
         }
 
-        /// <summary>
-        /// Pause the music
-        /// </summary>
+        /// <inheritdoc/>
         public void Pause()
         {
             musicController.Pause();
         }
 
-        /// <summary>
-        /// If the music was paused, resume.
-        /// </summary>
+        /// <inheritdoc/>
         public void UnPause()
         {
             musicController.UnPause();
         }
 
-        /// <summary>
-        /// Start playing music.
-        /// </summary>
+        /// <inheritdoc/>
         public void Play()
         {
-            if(!isPlaying)
+            if (!isPlaying)
                 StartCoroutine(PlayAll());
+        }
+
+        /// <inheritdoc/>
+        public void Shuffle()
+        {
+            permutation = GTMY.Utility.Shuffle.CreateRandomPermutation(soundtracks.Count, randomGenerator);
         }
 
         //public void PlayNext()
         //{
-
+        //    if(isPlaying)
+        //    {
+        //        // Supporting this would require removing the WaitForSeconds yield returns
+        //        // and checking each frame or delta time if a new track is needed. Since I 
+        //        // do not see a need for this in-game for our use cases, will not implement.
+        //        // OR
+        //        // Perhaps StopAllCoroutines and then ...  OR Call Stop and then Play.
+        //    }
         //}
 
-        /// <summary>
-        /// Shuffle the playlist.
-        /// </summary>
-        public void Shuffle()
+        private void Awake()
         {
-            permutation = GTMY.Utility.Shuffle.CreateRandomPermutation(soundtracks.Count, randomGenerator);
+            // Create audio sources to be used in the MusicController.
+            // This could be replaced with AudioSources with mixers and other
+            // changes to the default AudioSource.
+            AudioSource musicSource1 = gameObject.AddComponent<AudioSource>();
+            AudioSource musicSource2 = gameObject.AddComponent<AudioSource>();
+
+            // Make sure to enable loop on music sources
+            musicSource1.loop = true;
+            musicSource2.loop = true;
+
+            musicController = new MusicController(musicSource1, musicSource2, this);
         }
 
         private IEnumerator PlayAll()
@@ -156,12 +142,12 @@ namespace GTMY.Audio
                 isPlaying = true;
                 yield return PlaySingleSoundtrack();
             }
-            else if(soundtracks.Count == 2)
+            else if (soundtracks.Count == 2)
             {
                 isPlaying = true;
                 yield return PlayTwoSoundtracks();
             }
-            else if(soundtracks.Count > 2)
+            else if (soundtracks.Count > 2)
             {
                 isPlaying = true;
                 yield return PlayManySoundtracks();
@@ -200,9 +186,20 @@ namespace GTMY.Audio
 
         private IEnumerator PlayManySoundtracks()
         {
-            if(soundtrackIndex == 0 && shuffleOnLoadAndReplay)
+            if (soundtrackIndex == 0)
             {
-                Shuffle();
+                if (shuffleOnLoadAndReplay)
+                {
+                    Shuffle();
+                }
+                if (permutation == null)
+                {
+                    permutation = new List<int>(soundtracks.Count);
+                    for (int i = 0; i < soundtracks.Count; i++)
+                    {
+                        permutation.Add(i);
+                    }
+                }
             }
             currentOperationHandle = Addressables.LoadAssetAsync<AudioClip>(soundtracks[permutation[soundtrackIndex]]);
             oldOperationHandle = currentOperationHandle;
@@ -242,5 +239,27 @@ namespace GTMY.Audio
                 yield return new WaitForSeconds(clipLength - FadeTime - elapsedTime);
             }
         }
+        private void LoadMusicAddressesAsync(string musicGenre)
+        {
+            var addressableLabels = new List<string>() { "music" };
+            if (musicGenre != null && musicGenre != String.Empty)
+                addressableLabels.Add(musicGenre);
+            addressableAssets = Addressables.LoadResourceLocationsAsync(addressableLabels, Addressables.MergeMode.Intersection);
+            addressableAssets.Completed += SaveClipAddresses;
+        }
+
+        private void SaveClipAddresses(AsyncOperationHandle<IList<IResourceLocation>> addressHandles)
+        {
+            if (addressHandles.Status == AsyncOperationStatus.Succeeded)
+            {
+                foreach (var resourceLocation in addressHandles.Result)
+                {
+                    soundtracks.Add(resourceLocation);
+                }
+            }
+            // I do not think I need the AsyncOperationHandle anymore
+            Addressables.Release(addressHandles);
+        }
+
     }
 }

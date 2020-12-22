@@ -7,18 +7,12 @@
     {
         private readonly IAudio oneShotAudioSource;
 
-        /// <inheritdoc/>
-        public IAudio CreateAudioSource()
-        {
-            return oneShotAudioSource;
-        }
-
         /// <summary>
         /// Constructor.
         /// </summary>
         public AudioFactoryOneShot2D()
         {
-            oneShotAudioSource = OneShotAudioSourceSingleton.Instance;
+            oneShotAudioSource = AudioSource2DOneShotSingleton.Instance;
         }
 
         /// <summary>
@@ -28,6 +22,17 @@
         public AudioFactoryOneShot2D(IAudio audioSource)
         {
             oneShotAudioSource = audioSource;
+        }
+
+        /// <inheritdoc/>
+        public IAudio CreateAudioSource()
+        {
+            return oneShotAudioSource;
+        }
+
+        /// <inheritdoc/>
+        public void ReleaseAudioSource(IAudio audio)
+        {
         }
     }
 }

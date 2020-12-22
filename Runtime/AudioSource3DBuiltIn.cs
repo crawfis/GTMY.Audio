@@ -4,7 +4,7 @@
     /// Uses UnityEngine.AudiOClip.PlayClipAtPoint to play a 3D sound.
     /// </summary>
     /// <remarks>Stop() is not supported.</remarks>
-    public class Simple3DAudioSource : IAudio
+    public class AudioSource3DBuiltIn : IAudio
     {
         private UnityEngine.Vector3 position;
 
