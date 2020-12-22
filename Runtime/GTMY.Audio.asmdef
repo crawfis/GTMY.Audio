@@ -3,7 +3,8 @@
     "rootNamespace": "GTMY.Audio",
     "references": [
         "Unity.Addressables",
-        "Unity.ResourceManager"
+        "Unity.ResourceManager",
+        "GTMY.Utility"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
