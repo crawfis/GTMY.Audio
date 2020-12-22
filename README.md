@@ -11,7 +11,7 @@ To get things working following these steps:
    e) Paste:  https://github.com/crawfis/GTMY.Audio.git 
    f) Click Add
 2) Create an Empty Game Object and Add two scripts to it:
-   a) Music Player
+   a) Music Player Addressables
    b) Audio Manager Singleton
    c) Select the Music Player for the Audio Manager Singleton's field Music Player
 3) Create your library of music as an addressable group.
