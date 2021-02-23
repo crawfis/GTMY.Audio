@@ -25,6 +25,7 @@ namespace GTMY.Audio
         private AsyncOperationHandle<AudioClip> oldOperationHandle;
         private IList<int> permutation;
         private readonly System.Random randomGenerator = new System.Random();
+        private bool musicLoaded = false;
 
         /// <inheritdoc/>
         public float MasterVolume
@@ -135,6 +136,7 @@ namespace GTMY.Audio
 
         private IEnumerator PlayAll()
         {
+            yield return WaitForMusicToLoad();
             if (soundtracks.Count <= 0) yield break;
 
             if (soundtracks.Count == 1)
@@ -152,6 +154,12 @@ namespace GTMY.Audio
                 isPlaying = true;
                 yield return PlayManySoundtracks();
             }
+        }
+
+        private IEnumerator WaitForMusicToLoad()
+        {
+            while (!musicLoaded)
+                yield return null;
         }
 
         private IEnumerator PlaySingleSoundtrack()
@@ -259,6 +267,7 @@ namespace GTMY.Audio
             }
             // I do not think I need the AsyncOperationHandle anymore
             Addressables.Release(addressHandles);
+            musicLoaded = true;
         }
 
     }
