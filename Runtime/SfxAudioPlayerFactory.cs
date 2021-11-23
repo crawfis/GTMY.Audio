@@ -16,7 +16,7 @@
         /// <param name="sfxType">A keyword or phrase used to request this player.</param>
         /// <param name="audioFactory">An audio source factory.</param>
         /// <param name="clipProvider">A instance of IAudioClipProvider that determines which clip to play.</param>
-        /// <returns>An audio player. Can be used to bypass the AUdioManagerSingleton or ignored.</returns>
+        /// <returns>An audio player. Can be used to bypass the AudioManagerSingleton or ignored.</returns>
         public ISfxAudioPlayer CreateSfxAudioPlayer(string sfxType, IAudioFactory audioFactory, IAudioClipProvider clipProvider)
         {
             ISfxAudioPlayer sfxAudioPlayer = new SfxAudioPlayer(sfxType, clipProvider, audioFactory);

@@ -24,6 +24,19 @@ namespace GTMY.Audio
             this.audioFactory = audioFactory;
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="sfxType">A keyword or phase associated with this audio player.</param>
+        /// <param name="clipProvider">The clip provider to use.</param>
+        /// <param name="audio">The audio source to use each time a clip is played.</param>
+        public SfxAudioPlayer(string sfxType, IAudioClipProvider clipProvider, IAudio audio)
+        {
+            SfxType = sfxType;
+            this.clipProvider = clipProvider;
+            this.currentAudio = audio;
+        }
+
         /// <inheritdoc/>
         public string SfxType { get; private set; }
 
