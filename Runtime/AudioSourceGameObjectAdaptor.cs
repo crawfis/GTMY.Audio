@@ -7,17 +7,17 @@ namespace GTMY.Audio
     /// <summary>
     /// Turns a Unity GameObject into an IAudio or creates and adds a GameObject with an AudioSource.
     /// </summary>
-    public class AudioSourceGameObjectAdaptor : IAudio
+    public class AudioSourceGameObjectAdaptor : IAudio, IDisposable
     {
-        private readonly AudioSource audioSource;
-        private readonly IAudioFactory audioFactory;
-        private readonly GameObject gameObject;
-        private readonly MonoBehaviour coroutineHandler;
+        private AudioSource audioSource;
+        private IAudioFactory audioFactory;
+        private GameObject gameObject;
+        private MonoBehaviour coroutineHandler;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="audioFactory">Used to create any new audio sources.</param>
+        /// <param name="audioFactory">Used to return the audio source when finished.</param>
         /// <param name="coroutineHandler">Used to handle any coroutine calls.</param>
         /// <param name="name">The name to give a new GameObject. Default is IAudioWrapper.</param>
         public AudioSourceGameObjectAdaptor(IAudioFactory audioFactory, MonoBehaviour coroutineHandler, string name = "IAudioWrapper")
@@ -28,7 +28,7 @@ namespace GTMY.Audio
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="audioFactory">Used to create any new audio sources.</param>
+        /// <param name="audioFactory">Used to return the audio source when finished.</param>
         /// <param name="coroutineHandler">Used to handle any coroutine calls.</param>
         /// <param name="gameObject">A UnityEngine.GameObject.</param>
         /// <remarks>If the game object does not contain an AudioSource, one will be added.</remarks>
@@ -76,6 +76,14 @@ namespace GTMY.Audio
         internal GameObject GetGameObject()
         {
             return gameObject;
+        }
+
+        public void Dispose()
+        {
+            this.gameObject = null;
+            this.audioFactory = null;
+            this.coroutineHandler = null;
+            this.audioSource = null;
         }
     }
 }
