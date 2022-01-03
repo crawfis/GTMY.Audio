@@ -7,10 +7,11 @@ namespace GTMY.Audio
         private readonly AudioSourcePooler pool;
         private MonoBehaviour coroutineHandler;
 
-        public AudioFactoryPooled(MonoBehaviour coroutineHandle, AudioSourceGameObjectAdaptor gameAdaptorWithAudioSource)
+        public AudioFactoryPooled(MonoBehaviour coroutineHandle, GameObject audioPrefab)
         {
             this.coroutineHandler = coroutineHandle;
-            pool = new AudioSourcePooler(gameAdaptorWithAudioSource, this, coroutineHandler);
+            var gameObjectWithAudio = new AudioSourceGameObjectAdaptor(this, coroutineHandler);
+            pool = new AudioSourcePooler(gameObjectWithAudio, this, coroutineHandler);
         }
         public IAudio CreateAudioSource()
         {
