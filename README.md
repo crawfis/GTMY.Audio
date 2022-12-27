@@ -3,22 +3,23 @@ Audio Manager ReadMe
 This package has a simple music player and Sound Effects player that is controlled by a single manager for volume, mute, etc.
 
 To get things working following these steps:
-1) Install this package (which should also install Unity's Addressables package)
-   a) In Player Settings, select .Net 4.x.
-   b) Open Package Manager in Unity
-   c) Select the + drop down in the top-right corner (Unity 2020.2)
-   d) Select Add package from git URL ...
-   e) Paste:  https://github.com/crawfis/GTMY.Audio.git 
-   f) Click Add
-2) Create an Empty Game Object (Call it Music Player):
-   a) Add the script MusicPlayer (or MusicPlayerAddressables if using Addressables).
-   b) Select a genre if wanted (See step #4 below) and using Addressables
-   c) Check Shuffle is wanted.
-3) Create another Empty Game Object and add a new Script to it.
-   a) Call it InitializeAudioManager
-   b) Add a SerializableField to it that takes a MusicPlayerAddressables (or MusicPlayer if not using Addressables)
+1. Install this package (which should also install Unity's Addressables package)
+   1. In Player Settings, select .Net 4.x.
+   2. Open Package Manager in Unity
+   3. Select the + drop down in the top-right corner (Unity 2020.2)
+   4. Select Add package from git URL ...
+   5. Paste:  https://github.com/crawfis/GTMY.Audio.git 
+   6. Click Add
+2. Create an Empty Game Object (Call it Music Player):
+   1. Add the script MusicPlayerExplicit (or MusicPlayerAddressables if using Addressables).
+   2. If using Addressables, select a genre if wanted (See step #5 below)
+   3. Check Shuffle is wanted.
+3. Create another Empty Game Object and add a new Script to it.
+   1. Call it InitializeAudioManager
+   2. Add a SerializableField to it that takes a MusicPlayerAddressables (or MusicPlayer if not using Addressables)
        - Call this field or property Music.
-   c) Delete Start and Update and add an Awake method:
+   3. Delete Start and Update and add an Awake method:
+```cs
         private async System.Threading.Tasks.Task Awake()
         {
             // Keep this instance alive
@@ -27,16 +28,18 @@ To get things working following these steps:
             await UnityEngine.AddressableAssets.Addressables.Initialize().Task;
             AudioManagerSingleton.Instance.SetMusicPlayer(Music);
         }
-   d) In Unity, select the Music Player for the Initialize Audio Manager's field Music Player
-4) (If not using Addressables) Add any soundtracks to the MusicPlayer.
-5) (If using Addressables) Create your library of music as an addressable group.
-   a) Add a label to your soundtracks of "music". You can also add additional labels for specific uses or genres. These can be controlled in the Music Player Genre field.
+```
+   4. In Unity, select the Music Player for the Initialize Audio Manager's field Music Player
+4. (If not using Addressables) Add any soundtracks to the MusicPlayer.
+5. (If using Addressables) Create your library of music as an addressable group.
+   1. Add a label to your soundtracks of "music". You can also add additional labels for specific uses or genres. These can be controlled in the Music Player Genre field.
 
 That is it, you can now write scripts to turn music on (play) and off (Stop), control the volume, mute and pause / unpause.  If you want more control over what music is
 played or do not want to use Addressables, see the MusicController. Music Player is just a wrapper around MusicController.
 
 Here is a sample test Script:
 
+```cs
 using GTMY.Audio;
 using UnityEngine;
 
@@ -71,6 +74,7 @@ public class AudioManagerTest : MonoBehaviour
             // AudioManagerSingleton.Instance.PlaySfx("test");
     }
 }
+```
 # GTMY.Audio Framework
 
 Updated: December 22, 2020 by Roger Crawfis
@@ -99,23 +103,23 @@ Concrete implementations of the IMusicPlayer include a simple MonoBehaviour that
 
 For sound effects and ambiance, there are four key interfaces as described below:
 
-- ISfxAudioPlayer – A sound effects player that managers the audio source construction and clip selection. There are 3 properties and 3 behaviors associated with this interface.
-  - SfxType – A string that identifies the &quot;theme&quot; of this player, for instance &quot;explosion&quot; or &quot;ambience&quot;. Different players are used for different themes.
-  - GlobalVolume – Allows the Audio manager to control the overall master volume. This is pushed through to the sources, rather than pulled from a known blackboard such as AudioManagerSingleton.
-  - LocalVolume – Allows this specific type or &quot;theme&quot; to have its volume scaled down from the master or global volume.
-  - Play(volume) – Play a sound effect, scaling the volume down even further.
-  - Stop() – Stop the clip. Note, since some Sfx&#39;s are assumed to be short, an implementation may ignore any calls.
-- IAudio – The audio channel and properties that actually play the sound / music. Concrete classes for Unity3D usually will encapsulate at least one UnityEngine.AudioSource. There are three behaviors:
-  - Play(clip, volume) – plays the clip with the specified
+- ISfxAudioPlayer â€“ A sound effects player that managers the audio source construction and clip selection. There are 3 properties and 3 behaviors associated with this interface.
+  - SfxType â€“ A string that identifies the &quot;theme&quot; of this player, for instance &quot;explosion&quot; or &quot;ambience&quot;. Different players are used for different themes.
+  - GlobalVolume â€“ Allows the Audio manager to control the overall master volume. This is pushed through to the sources, rather than pulled from a known blackboard such as AudioManagerSingleton.
+  - LocalVolume â€“ Allows this specific type or &quot;theme&quot; to have its volume scaled down from the master or global volume.
+  - Play(volume) â€“ Play a sound effect, scaling the volume down even further.
+  - Stop() â€“ Stop the clip. Note, since some Sfx&#39;s are assumed to be short, an implementation may ignore any calls.
+- IAudio â€“ The audio channel and properties that actually play the sound / music. Concrete classes for Unity3D usually will encapsulate at least one UnityEngine.AudioSource. There are three behaviors:
+  - Play(clip, volume) â€“ plays the clip with the specified
   -
-  - Stop() – Stops a clip that is playing.
-  - SetAudioPosition(Vector3 position) – set the location of the audio source.
-- IAudioClipProvider – Provides a UnityEngineAudio clip when asked for. Allows clips to be played via themes, rather than specific files, although a concrete implementation allows for a single specific clip object. Supports two behaviors:
-  - GetNextClip() -\&gt; UnityEngine.AudioClip – provides a clip.
-  - Shuffle() – Changes the order clips are provided.
-- IAudioFactory – Provides instances of IAudio when needed. There are two behaviors:
-  - CreateAudioSource -\&gt; IAudio – Returns an instance of IAudio.
-  - ReleaseAudioSource(IAudio) – Lets the class know that this instance of IAudio is no longer needed.
+  - Stop() â€“ Stops a clip that is playing.
+  - SetAudioPosition(Vector3 position) â€“ set the location of the audio source.
+- IAudioClipProvider â€“ Provides a UnityEngineAudio clip when asked for. Allows clips to be played via themes, rather than specific files, although a concrete implementation allows for a single specific clip object. Supports two behaviors:
+  - GetNextClip() -\&gt; UnityEngine.AudioClip â€“ provides a clip.
+  - Shuffle() â€“ Changes the order clips are provided.
+- IAudioFactory â€“ Provides instances of IAudio when needed. There are two behaviors:
+  - CreateAudioSource -\&gt; IAudio â€“ Returns an instance of IAudio.
+  - ReleaseAudioSource(IAudio) â€“ Lets the class know that this instance of IAudio is no longer needed.
 
 ## Example Usage
 
@@ -126,7 +130,7 @@ Usage is simple, for instance to play a sound on a collision, just call:
 **AudioManagerSingleton**._PlaySfx_(&quot;collision&quot;, 0.8f);
 
 This method assumes there is an audio player associated with the keyword &quot;collision&quot;. The constant is an optional scale on the volume (assumed between 0 and 1). It is implemented as follows:
-
+```cs
 public void PlaySfx(string soundType, float volumeScale = 1)
 
 {
@@ -140,11 +144,11 @@ public void PlaySfx(string soundType, float volumeScale = 1)
     }
 
 }
-
+```
 ## ISfxAudioPlayer Implementations
 
 The concrete SfxPlayer class implements the _Play_ method as follows:
-
+```cs
 public void Play(float localVolumeScale)
 
 {
@@ -160,7 +164,7 @@ public void Play(float localVolumeScale)
     currentAudio.Play(clip, volumeScale);
 
 }
-
+```
 This class holds (contains) an instance of an IClipProvider and uses it to acquire an audio clip. Once acquired, the overall volume is calculated, an audio source is acquired or created using a factory and then the clip is played on this audio source at the desired volume.
 
 You can register a ISfxAudioPlayer with the AudioManagerSingleton. Once registered, you can also get or access the audio player using the string keyword.
@@ -175,31 +179,31 @@ ISfxAudioPlayer&#39;s can easily be created using the SfxAudioPlayFactory instan
 
 In general, the programmer or user will not deal with IAudio&#39;s directly, but rather use an IAudioFactory. Creating new factories may require new implementations of IAudio. There are several IAudio implementations available. These include:
 
-- AudioSource2DOneShotSingleton – uses Unity&#39;s OneShotMethod on a reusable AudioSource to play a sound effect. An immutable AudioSource is created and SetAudioPosition is not supported. The position is always the origin. The Stop method is also a no-op as clips are assumed to be short.
+- AudioSource2DOneShotSingleton â€“ uses Unity&#39;s OneShotMethod on a reusable AudioSource to play a sound effect. An immutable AudioSource is created and SetAudioPosition is not supported. The position is always the origin. The Stop method is also a no-op as clips are assumed to be short.
   - Created by AudioFactoryOneShot2D using &quot;OneShot2D&quot;. This is a pre-registered factory.
-- AudioSource3DOneShot – uses Unity&#39;s OneShotMethod on a reusable AudioSource to play a sound effect. An AudioSource is provided in the constructor. The Stop method is a no-op as clips are assumed to be short and Unity&#39;s OneShot does not support stopping them.
+- AudioSource3DOneShot â€“ uses Unity&#39;s OneShotMethod on a reusable AudioSource to play a sound effect. An AudioSource is provided in the constructor. The Stop method is a no-op as clips are assumed to be short and Unity&#39;s OneShot does not support stopping them.
   - No default factory associated with this type.
-- AudioSource3DBuiltIn – uses Unity&#39;s PlayClipAtPoint static method. The AudioSource is not exposed and hence cannot be changed. The Stop method is a no-op as clips are assumed to be short and Unity&#39;s PlayClipAtPoint does not support a stop method.
+- AudioSource3DBuiltIn â€“ uses Unity&#39;s PlayClipAtPoint static method. The AudioSource is not exposed and hence cannot be changed. The Stop method is a no-op as clips are assumed to be short and Unity&#39;s PlayClipAtPoint does not support a stop method.
   - Created by AudioFactory3DBuiltIn using &quot;3D&quot;. This is a pre-registered factory.
-- AudioSourceGameObjectAdaptor – uses the AudioSource attached to a Unity GameObject. It will create an AudioSource if one is not found.
+- AudioSourceGameObjectAdaptor â€“ uses the AudioSource attached to a Unity GameObject. It will create an AudioSource if one is not found.
   - Created by an AudioFactoryPrefab once registered.
-- AudioSourceComposite – contains a selection of audio sources (IAudio&#39;s) that are picked at random each time a clip is requested. Allows for variety of pitch / volume, etc. Not sure how this will work with clean-up and pooling. Seems like a factory thing except for AudioSource3DOneShot.
+- AudioSourceComposite â€“ contains a selection of audio sources (IAudio&#39;s) that are picked at random each time a clip is requested. Allows for variety of pitch / volume, etc. Not sure how this will work with clean-up and pooling. Seems like a factory thing except for AudioSource3DOneShot.
 
-More factories are needed to handle object pooling, …
+More factories are needed to handle object pooling, â€¦
 
 ## IAudioClipProvider&#39;s
 
 Audio Clip Providers allow for
 
 1. Some variety of sound effects.
-2. Separation of concerns – what to play versus how to play it.
+2. Separation of concerns â€“ what to play versus how to play it.
 3. Avoidance of hard-wired file locations
 
 There are currently 3 different IAudioClipProvider&#39;s:
 
-- AudioClipProviderSingleInstance – always returns the same clip. Think of this as replacing a hard-wired clip in a SfxAudioPlayer.
-- AudioClipProvider – contains a list of AudioClip&#39;s and randomly selects one.
-- AudioClipProviderAddressablesPreLoaded – derived from AudioClipProvider. It uses Addressables and string keywords to load the targeted sound effect(s) by calling LoadAllClipsAsync.
+- AudioClipProviderSingleInstance â€“ always returns the same clip. Think of this as replacing a hard-wired clip in a SfxAudioPlayer.
+- AudioClipProvider â€“ contains a list of AudioClip&#39;s and randomly selects one.
+- AudioClipProviderAddressablesPreLoaded â€“ derived from AudioClipProvider. It uses Addressables and string keywords to load the targeted sound effect(s) by calling LoadAllClipsAsync.
 
 ## MonoBehaviours and Testing
 
