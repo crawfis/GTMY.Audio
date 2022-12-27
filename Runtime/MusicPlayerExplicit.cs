@@ -102,6 +102,7 @@ namespace GTMY.Audio
 
         private IEnumerator PlayAll()
         {
+            isPlaying = true;
             if (!shuffleOnLoadAndReplay && permutation == null)
             {
                 permutation = new List<int>(soundtracks.Count);
