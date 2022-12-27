@@ -18,7 +18,7 @@ namespace GTMY.Audio
         private float masterVolume = 1;
         private float volumeBeforeMuteCalled;
         private bool isMuted = false;
-        private readonly Dictionary<string, ISfxAudioPlayer> sfxAudioPlayers = new Dictionary<string, ISfxAudioPlayer>();
+        private readonly Dictionary<string, ISfxAudioPlayer> sfxAudioPlayers = new();
 
         /// <summary>
         /// Get the singleton instance.
@@ -91,13 +91,17 @@ namespace GTMY.Audio
         /// <param name="sfxAudioPlayer">An ISfxAudioPlayer.</param>
         public void RegisterAudioPlayer(ISfxAudioPlayer sfxAudioPlayer)
         {
+            if (sfxAudioPlayer == null) return;
             string soundType = sfxAudioPlayer.SfxType;
             if (sfxAudioPlayers.ContainsKey(soundType))
             {
-                if (sfxAudioPlayer == null || sfxAudioPlayer == sfxAudioPlayers[soundType]) return;
+                // Trying to re-register. Ignore and forgive.
+                if (sfxAudioPlayer == sfxAudioPlayers[soundType]) return;
+                // Trying to add a different AudioPlayer associated with the same soundType. Not allowed.
+                // Todo: research whether this sould replace the existing player for the soundtype.
                 else
                 {
-                    throw new ArgumentException(String.Format("A Sfx Player of type {0} is already registered.", soundType), "soundType");
+                    throw new ArgumentException(String.Format("A different Sfx Player of type {0} is already registered.", soundType), "sfxAudioPlayer");
                 }
             }
 
@@ -117,7 +121,8 @@ namespace GTMY.Audio
 
         private void AdjustControllerVolumes()
         {
-            Music.MasterVolume = masterVolume;
+            if(Music != null)
+                Music.MasterVolume = masterVolume;
             foreach(ISfxAudioPlayer player in sfxAudioPlayers.Values)
             {
                 player.MasterVolume = masterVolume;
