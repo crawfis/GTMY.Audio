@@ -3,22 +3,22 @@ Audio Manager ReadMe
 This package has a simple music player and Sound Effects player that is controlled by a single manager for volume, mute, etc.
 
 To get things working following these steps:
-1) Install this package (which should also install Unity's Addressables package)
-   a) In Player Settings, select .Net 4.x.
-   b) Open Package Manager in Unity
-   c) Select the + drop down in the top-right corner (Unity 2020.2)
-   d) Select Add package from git URL ...
-   e) Paste:  https://github.com/crawfis/GTMY.Audio.git 
-   f) Click Add
-2) Create an Empty Game Object (Call it Music Player):
-   a) Add the script MusicPlayerExplicit (or MusicPlayerAddressables if using Addressables).
-   b) If using Addressables, select a genre if wanted (See step #5 below)
-   c) Check Shuffle is wanted.
-3) Create another Empty Game Object and add a new Script to it.
-   a) Call it InitializeAudioManager
-   b) Add a SerializableField to it that takes a MusicPlayerAddressables (or MusicPlayer if not using Addressables)
+1. Install this package (which should also install Unity's Addressables package)
+   1. In Player Settings, select .Net 4.x.
+   2. Open Package Manager in Unity
+   3. Select the + drop down in the top-right corner (Unity 2020.2)
+   4. Select Add package from git URL ...
+   5. Paste:  https://github.com/crawfis/GTMY.Audio.git 
+   6. Click Add
+2. Create an Empty Game Object (Call it Music Player):
+   1. Add the script MusicPlayerExplicit (or MusicPlayerAddressables if using Addressables).
+   2. If using Addressables, select a genre if wanted (See step #5 below)
+   3. Check Shuffle is wanted.
+3. Create another Empty Game Object and add a new Script to it.
+   1. Call it InitializeAudioManager
+   2. Add a SerializableField to it that takes a MusicPlayerAddressables (or MusicPlayer if not using Addressables)
        - Call this field or property Music.
-   c) Delete Start and Update and add an Awake method:
+   3. Delete Start and Update and add an Awake method:
 ```cs
         private async System.Threading.Tasks.Task Awake()
         {
@@ -29,10 +29,10 @@ To get things working following these steps:
             AudioManagerSingleton.Instance.SetMusicPlayer(Music);
         }
 ```
-   d) In Unity, select the Music Player for the Initialize Audio Manager's field Music Player
-4) (If not using Addressables) Add any soundtracks to the MusicPlayer.
-5) (If using Addressables) Create your library of music as an addressable group.
-   a) Add a label to your soundtracks of "music". You can also add additional labels for specific uses or genres. These can be controlled in the Music Player Genre field.
+   4. In Unity, select the Music Player for the Initialize Audio Manager's field Music Player
+4. (If not using Addressables) Add any soundtracks to the MusicPlayer.
+5. (If using Addressables) Create your library of music as an addressable group.
+   1. Add a label to your soundtracks of "music". You can also add additional labels for specific uses or genres. These can be controlled in the Music Player Genre field.
 
 That is it, you can now write scripts to turn music on (play) and off (Stop), control the volume, mute and pause / unpause.  If you want more control over what music is
 played or do not want to use Addressables, see the MusicController. Music Player is just a wrapper around MusicController.
