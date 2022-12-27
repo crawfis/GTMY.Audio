@@ -11,8 +11,8 @@ To get things working following these steps:
    e) Paste:  https://github.com/crawfis/GTMY.Audio.git 
    f) Click Add
 2) Create an Empty Game Object (Call it Music Player):
-   a) Add the script MusicPlayer (or MusicPlayerAddressables if using Addressables).
-   b) Select a genre if wanted (See step #4 below) and using Addressables
+   a) Add the script MusicPlayerExplicit (or MusicPlayerAddressables if using Addressables).
+   b) If using Addressables, select a genre if wanted (See step #5 below)
    c) Check Shuffle is wanted.
 3) Create another Empty Game Object and add a new Script to it.
    a) Call it InitializeAudioManager
