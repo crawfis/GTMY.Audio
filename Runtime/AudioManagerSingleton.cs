@@ -101,7 +101,8 @@ namespace GTMY.Audio
                 // Todo: research whether this sould replace the existing player for the soundtype.
                 else
                 {
-                    throw new ArgumentException(String.Format("A different Sfx Player of type {0} is already registered.", soundType), "sfxAudioPlayer");
+                    //throw new ArgumentException(String.Format("A different Sfx Player of type {0} is already registered.", soundType), "sfxAudioPlayer");
+                    sfxAudioPlayers[soundType] = sfxAudioPlayer;
                 }
             }
 
