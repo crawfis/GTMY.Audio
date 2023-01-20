@@ -103,6 +103,7 @@ namespace GTMY.Audio
                 {
                     //throw new ArgumentException(String.Format("A different Sfx Player of type {0} is already registered.", soundType), "sfxAudioPlayer");
                     sfxAudioPlayers[soundType] = sfxAudioPlayer;
+                    return;
                 }
             }
 
