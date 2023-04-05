@@ -121,6 +121,14 @@ namespace GTMY.Audio
             return sfxAudioPlayers[soundType];
         }
 
+        /// <summary>
+        /// Removes all registered ISfxAudioPlayers.
+        /// </summary>
+        public void ClearAll()
+        {
+            sfxAudioPlayers.Clear();
+        }
+
         private void AdjustControllerVolumes()
         {
             if(Music != null)
