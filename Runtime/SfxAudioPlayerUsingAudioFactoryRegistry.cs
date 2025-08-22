@@ -1,7 +1,7 @@
 ﻿namespace GTMY.Audio
 {
     /// <summary>
-    /// A concrete implemenation of ISfxAudioPlayer using an audio factory
+    /// A concrete implementation of ISfxAudioPlayer using an audio factory
     /// obtained from the AudioFactoryRegistry class (singleton instance).
     /// </summary>
     internal class SfxAudioPlayerUsingAudioFactoryRegistry : SfxAudioPlayer
