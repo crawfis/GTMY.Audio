@@ -53,6 +53,14 @@ namespace GTMY.Audio
             return factory;
         }
 
+        /// <summary>
+        /// Clears all audio factories from the registry.
+        /// </summary>
+        public void ClearAudioFactories()
+        {
+            audioFactories.Clear();
+        }
+
         private AudioFactoryRegistry()
         {
             RegisterDefaultAudioFactories();

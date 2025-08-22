@@ -1,10 +1,9 @@
 {
 	"name": "com.gamesthatmoveyou.audiomanager",
-	"version": "1.0.17",
+	"version": "1.0.18",
 	"displayName": "GTMY AudioManager",
 	"description": "Control music, ambiance and SFX",
-	"unity": "2019.4",
-	"unityRelease": "10f1",
+	"unity": "2023.3",
 	"dependencies": {
 		"com.unity.addressables": "1.14.2"
 	},
@@ -14,8 +13,8 @@
 		"audio"
 	],
 	"author": {
-		"name": "RxGames",
-		"email": "developer@rxgames.com",
+		"name": "Roger Crawfis, RxGames",
+		"email": "support@rxgames.com",
 		"url": "https://www.rxgames.com"
 	}
 }
