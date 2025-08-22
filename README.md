@@ -20,13 +20,14 @@ To get things working following these steps:
        - Call this field or property Music.
    3. Delete Start and Update and add an Awake method:
 ```cs
-        private async System.Threading.Tasks.Task Awake()
+        private void Awake()
         {
             // Keep this instance alive
             DontDestroyOnLoad(this.gameObject);
-
-            await UnityEngine.AddressableAssets.Addressables.Initialize().Task;
             AudioManagerSingleton.Instance.SetMusicPlayer(Music);
+
+            // If using Addressables can initialize the system or load a catalog here.
+            // _ = UnityEngine.AddressableAssets.Addressables.Initialize();
         }
 ```
    4. In Unity, select the Music Player for the Initialize Audio Manager's field Music Player

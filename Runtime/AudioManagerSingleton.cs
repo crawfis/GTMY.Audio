@@ -101,7 +101,9 @@ namespace GTMY.Audio
                 // Todo: research whether this should replace the existing player for the soundType.
                 else
                 {
-                    throw new ArgumentException(String.Format("A different Sfx Player of type {0} is already registered.", soundType), "sfxAudioPlayer");
+                    //throw new ArgumentException(String.Format("A different Sfx Player of type {0} is already registered.", soundType), "sfxAudioPlayer");
+                    sfxAudioPlayers[soundType] = sfxAudioPlayer;
+                    return;
                 }
             }
 
@@ -142,6 +144,14 @@ namespace GTMY.Audio
         public ISfxAudioPlayer GetAudioPlayer(string soundType)
         {
             return sfxAudioPlayers[soundType];
+        }
+
+        /// <summary>
+        /// Removes all registered ISfxAudioPlayers.
+        /// </summary>
+        public void ClearAll()
+        {
+            sfxAudioPlayers.Clear();
         }
 
         private void AdjustControllerVolumes()
