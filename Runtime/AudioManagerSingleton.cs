@@ -98,7 +98,7 @@ namespace GTMY.Audio
                 // Trying to re-register. Ignore and forgive.
                 if (sfxAudioPlayer == sfxAudioPlayers[soundType]) return;
                 // Trying to add a different AudioPlayer associated with the same soundType. Not allowed.
-                // Todo: research whether this sould replace the existing player for the soundtype.
+                // Todo: research whether this should replace the existing player for the soundType.
                 else
                 {
                     throw new ArgumentException(String.Format("A different Sfx Player of type {0} is already registered.", soundType), "sfxAudioPlayer");
@@ -106,6 +106,31 @@ namespace GTMY.Audio
             }
 
             sfxAudioPlayers.Add(soundType, sfxAudioPlayer);
+        }
+
+        /// <summary>
+        /// Unregister an audio player.
+        /// </summary>
+        /// <param name="sfxAudioPlayer">The audio player to unregister.</param>
+        public void UnregisterAudioPlayer(ISfxAudioPlayer sfxAudioPlayer)
+        {
+            if (sfxAudioPlayer == null) return;
+            string soundType = sfxAudioPlayer.SfxType;
+            if (sfxAudioPlayers.ContainsKey(soundType))
+            {
+                sfxAudioPlayers.Remove(soundType);
+            }
+        }
+
+        /// <summary>
+        /// Clears all audio players from the collection.
+        /// </summary>
+        /// <remarks>This method removes all sound effect audio players from the internal collection, 
+        /// leaving it empty. Use this method to reset or release resources associated with  the audio
+        /// players.</remarks>
+        public void ClearAudioPlayers()
+        {
+            sfxAudioPlayers.Clear();
         }
 
         /// <summary>
@@ -121,9 +146,9 @@ namespace GTMY.Audio
 
         private void AdjustControllerVolumes()
         {
-            if(Music != null)
+            if (Music != null)
                 Music.MasterVolume = masterVolume;
-            foreach(ISfxAudioPlayer player in sfxAudioPlayers.Values)
+            foreach (ISfxAudioPlayer player in sfxAudioPlayers.Values)
             {
                 player.MasterVolume = masterVolume;
             }

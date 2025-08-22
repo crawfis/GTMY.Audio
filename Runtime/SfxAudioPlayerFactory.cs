@@ -38,6 +38,10 @@
             return sfxAudioPlayer;
         }
 
+        public void ClearAudioPlayers()
+        {
+            AudioManagerSingleton.Instance.ClearAudioPlayers();
+        }
         private SfxAudioPlayerFactory()
         {
         }
