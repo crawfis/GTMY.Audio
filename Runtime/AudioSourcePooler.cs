@@ -1,4 +1,5 @@
 ﻿using CrawfisSoftware;
+
 using UnityEngine;
 
 namespace GTMY.Audio
@@ -26,6 +27,6 @@ namespace GTMY.Audio
         }
         protected override void GetPoolInstance(AudioSourceGameObjectAdaptor poolObject) => poolObject.GetGameObject().SetActive(true);
         protected override void ReleasePoolInstance(AudioSourceGameObjectAdaptor poolObject) => poolObject.GetGameObject().SetActive(false);
-        protected override void DestroyPoolInstance(AudioSourceGameObjectAdaptor poolObject) => Object.Destroy(poolObject.GetGameObject());
+        protected override void DestroyPoolInstance(AudioSourceGameObjectAdaptor poolObject) => Object.DestroyImmediate(poolObject.GetGameObject());
     }
 }
