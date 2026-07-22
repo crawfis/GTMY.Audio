@@ -50,6 +50,7 @@ namespace GTMY.Audio
         public void Play(float localVolumeScale)
         {
             UnityEngine.AudioClip clip = clipProvider.GetNextClip();
+            if (clip == null) return; // provider may still be loading clips asynchronously
             float volumeScale = localVolumeScale * LocalVolume * MasterVolume;
             GetAudio();
             currentAudio?.Play(clip, volumeScale);

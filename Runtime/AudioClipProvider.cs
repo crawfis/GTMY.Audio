@@ -39,13 +39,18 @@ namespace GTMY.Audio
         /// <inheritdoc/>
         public AudioClip GetNextClip()
         {
-            if (permutation == null)
+            // Clips can arrive asynchronously (e.g. Addressables). Never index into an
+            // empty list, and rebuild the permutation if the clip count has changed since
+            // it was created (a permutation cached while loading would stay stale forever).
+            if (clips.Count == 0) return null;
+            if (permutation == null || permutation.Count != clips.Count)
             {
                 permutation = new List<int>(clips.Count);
                 for (int i = 0; i < clips.Count; i++)
                 {
                     permutation.Add(i);
                 }
+                clipIndex = 0;
             }
             if (clipIndex >= clips.Count)
             {
